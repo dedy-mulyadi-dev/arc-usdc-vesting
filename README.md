@@ -9,7 +9,7 @@ Built with [Arc Studio](https://studio.arc.io)
 - Frontend: React 18, Vite, TypeScript, Tailwind CSS, Framer Motion
 - Web3: wagmi v2, viem, ConnectKit
 - Contracts: Solidity 0.8.28, OpenZeppelin SafeERC20 + ReentrancyGuard, Foundry
-- Chain: Arc Testnet (Chain ID: 5042002)
+- Chains: Arc Mainnet (Chain ID: 5042) and Arc Testnet (Chain ID: 5042002)
 - Token: USDC (ERC-20, 6 decimals, `0x3600000000000000000000000000000000000000`)
 
 ## Deployed Contracts
