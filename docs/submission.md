@@ -48,6 +48,12 @@ This project was built entirely inside Arc Studio from a blank canvas:
 
 ---
 
+## Live app
+
+https://arc-usdc-vesting.vercel.app
+
+Source code: https://github.com/dedy-mulyadi-dev/arc-usdc-vesting
+
 ## Live deployments
 
 | Network     | Contract Address                             | Explorer |

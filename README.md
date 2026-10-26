@@ -12,6 +12,10 @@ Built with [Arc Studio](https://studio.arc.io)
 - Chains: Arc Mainnet (Chain ID: 5042) and Arc Testnet (Chain ID: 5042002)
 - Token: USDC (ERC-20, 6 decimals, `0x3600000000000000000000000000000000000000`)
 
+## Live App
+
+https://arc-usdc-vesting.vercel.app
+
 ## Deployed Contracts
 
 | Contract     | Chain        | Address                                      |
