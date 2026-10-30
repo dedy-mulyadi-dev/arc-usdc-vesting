@@ -70,7 +70,7 @@ bun run dev
 
 ```bash
 bun run contracts:build   # compile contracts
-bun run contracts:test    # run Foundry tests (55 tests)
+bun run contracts:test    # run Foundry tests
 ```
 
 ## App Features
