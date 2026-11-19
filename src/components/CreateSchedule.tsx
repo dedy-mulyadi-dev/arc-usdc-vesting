@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useModal } from 'connectkit'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
 import { erc20Abi, isAddress, zeroAddress } from 'viem'
 import { Loader2, Plus, ExternalLink, AlertTriangle, ChevronLeft } from 'lucide-react'
@@ -7,6 +8,7 @@ import { VESTING_VAULT_ABI, getVestingVaultAddress } from '@/vestingVault'
 import { buildTxUrl } from '@/networkConfig'
 import type { NetworkConfig } from '@/networkConfig'
 import { Amount } from '@/onchain-money'
+import ReleasePreview from '@/components/ReleasePreview'
 
 const glass = {
   card: { background: 'var(--surface)', backdropFilter: 'blur(24px) saturate(180%)', WebkitBackdropFilter: 'blur(24px) saturate(180%)', border: '1px solid var(--border)' } as React.CSSProperties,
@@ -23,6 +25,7 @@ interface Props {
 
 export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props) {
   const { address, isConnected } = useAccount()
+  const { setOpen } = useModal()
 
   // ── Form state — NEVER cleared by approve or wallet changes ─────────────
   const [beneficiary, setBeneficiary] = useState('')
@@ -156,7 +159,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="rounded-3xl p-5 space-y-4" style={glass.card}>
+    <div className="vv-card rounded-3xl p-5 space-y-4" style={glass.card}>
       {/* Header */}
       <div className="flex items-center gap-2">
         {confirming && (
@@ -172,7 +175,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
           <Plus className="size-4" style={{ color: 'var(--accent)' }} />
         </div>
         <h2 className="display text-base font-semibold" style={{ color: 'var(--ink)' }}>
-          {confirming ? 'Confirm Schedule' : 'Create Vesting Schedule'}
+          {confirming ? 'Confirm schedule' : 'New vesting schedule'}
         </h2>
       </div>
 
@@ -247,7 +250,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
             <button
               disabled={!formValid || approvePending || approveConfirming || wrongChain || (isSelf && !selfConfirmed)}
               onClick={handleApprove}
-              className="w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+              className="vv-cta w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
               style={{ background: 'var(--accent)' }}
             >
               {!isConnected ? 'Connect wallet'
@@ -265,7 +268,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
             <button
               disabled={!canConfirmCreate || createPending || createConfirming || createSuccess}
               onClick={handleCreate}
-              className="w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+              className="vv-cta w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
               style={{ background: 'var(--accent)' }}
             >
               {createPending
@@ -303,7 +306,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
             <label className="text-xs font-semibold tracking-wide uppercase" style={{ color: 'var(--muted)' }}>
               Beneficiary Address
             </label>
-            <div className="rounded-2xl px-4 py-3" style={{
+            <div className="vv-field rounded-2xl px-4 py-3" data-invalid={beneficiaryInvalid ? '' : undefined} style={{
               ...glass.inner,
               border: beneficiaryInvalid ? '1px solid rgba(186,43,76,0.4)' : (glass.inner).border,
             }}>
@@ -345,7 +348,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
                 </button>
               )}
             </div>
-            <div className="rounded-2xl px-4 py-3" style={glass.inner}>
+            <div className="vv-field rounded-2xl px-4 py-3" style={glass.inner}>
               <input
                 inputMode="decimal"
                 className="display w-full bg-transparent text-2xl font-bold tabular-nums outline-none placeholder:text-slate-300"
@@ -369,7 +372,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
               Duration
             </label>
             <div className="flex gap-2">
-              <div className="flex-1 rounded-2xl px-4 py-3" style={glass.inner}>
+              <div className="vv-field flex-1 rounded-2xl px-4 py-3" style={glass.inner}>
                 <input
                   inputMode="decimal"
                   className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
@@ -430,7 +433,7 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
               </button>
             </div>
             {!startNow && (
-              <div className="rounded-2xl px-4 py-3" style={glass.inner}>
+              <div className="vv-field rounded-2xl px-4 py-3" style={glass.inner}>
                 <input
                   type="datetime-local"
                   className="w-full bg-transparent text-sm outline-none"
@@ -442,11 +445,19 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
             )}
           </div>
 
+          {/* Release preview: UI only, computed from the form values */}
+          <ReleasePreview
+            amount={parsedAmount ? parseFloat(amount) : null}
+            durationSecs={durationSecs}
+            startNow={startNow}
+            startDate={startDate}
+          />
+
           {/* Review button → opens confirmation panel */}
           <button
-            disabled={!formValid || beneficiaryInvalid}
-            onClick={() => setConfirming(true)}
-            className="w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={isConnected && (!formValid || beneficiaryInvalid)}
+            onClick={() => (isConnected ? setConfirming(true) : setOpen(true))}
+            className="vv-cta w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
             style={{ background: 'var(--accent)' }}
           >
             {!isConnected ? 'Connect wallet'

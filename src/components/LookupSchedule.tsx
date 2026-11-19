@@ -40,7 +40,7 @@ export default function LookupSchedule({ net, wrongChain, onSwitchChain }: Props
 
   return (
     <div className="space-y-4">
-      <div className="rounded-3xl p-5 space-y-4" style={glass.card}>
+      <div className="vv-card rounded-3xl p-5 space-y-4" style={glass.card}>
         <div className="flex items-center gap-2">
           <div className="flex size-7 items-center justify-center rounded-xl" style={{ background: 'rgba(18,45,69,0.08)' }}>
             <Search className="size-4" style={{ color: 'var(--accent)' }} />
@@ -63,7 +63,7 @@ export default function LookupSchedule({ net, wrongChain, onSwitchChain }: Props
                 </button>
               )}
             </div>
-            <div className="rounded-2xl px-4 py-3" style={glass.inner}>
+            <div className="vv-field rounded-2xl px-4 py-3" style={glass.inner}>
               <input
                 className="w-full bg-transparent text-sm outline-none mono placeholder:text-slate-400"
                 style={{ color: 'var(--ink)' }}
@@ -79,7 +79,7 @@ export default function LookupSchedule({ net, wrongChain, onSwitchChain }: Props
         <button
           disabled={!canLookup}
           onClick={handleLookup}
-          className="w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+          className="vv-cta w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
           style={{ background: 'var(--accent)' }}
         >
           Look up schedule

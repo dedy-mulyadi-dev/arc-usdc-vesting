@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#12395c"/><stop offset="1" stop-color="#06131f"/></linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.18" r="0.75"><stop offset="0" stop-color="#5fc8ff" stop-opacity=".42"/><stop offset="1" stop-color="#5fc8ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ramp" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1a7fd6"/><stop offset="1" stop-color="#7beaff"/></linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="17" fill="url(#bg)"/>
+  <rect width="64" height="64" rx="17" fill="url(#glow)"/>
+  <rect x=".6" y=".6" width="62.8" height="62.8" rx="16.4" fill="none" stroke="#fff" stroke-opacity=".14" stroke-width="1.2"/>
+  <line x1="15" y1="19" x2="29.5" y2="47" stroke="#cfe9ff" stroke-opacity=".92" stroke-width="8.5" stroke-linecap="round"/>
+  <line x1="29.5" y1="47" x2="49" y2="17" stroke="url(#ramp)" stroke-width="8.5" stroke-linecap="round"/>
+  <circle cx="49.5" cy="15.5" r="5.2" fill="#071a2b" stroke="#8ff0ff" stroke-width="2.8"/>
+</svg>

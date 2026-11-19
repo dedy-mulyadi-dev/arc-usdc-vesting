@@ -205,7 +205,7 @@ export default function ScheduleView({
   // ── "No schedule" early return ────────────────────────────────────────────
   if (status === 'none') {
     return (
-      <div className="rounded-3xl p-5 space-y-3" style={glass.card}>
+      <div className="vv-card rounded-3xl p-5 space-y-3" style={glass.card}>
         <div className="flex items-center gap-2">
           <div className="flex size-7 items-center justify-center rounded-xl" style={{ background: 'rgba(18,45,69,0.06)' }}>
             <HelpCircle className="size-4" style={{ color: 'var(--muted)' }} />
@@ -225,7 +225,7 @@ export default function ScheduleView({
   }
 
   return (
-    <div className="rounded-3xl p-5 space-y-4" style={glass.card}>
+    <div className="vv-card rounded-3xl p-5 space-y-4" style={glass.card}>
       {/* Title + status badge */}
       <div className="flex items-center gap-2">
         <div className="flex size-7 items-center justify-center rounded-xl"

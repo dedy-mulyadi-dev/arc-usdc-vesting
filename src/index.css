@@ -4,9 +4,9 @@
 
 :root {
   --bg-gradient: linear-gradient(180deg, #f9f9fc 0%, #fffcf7 52%, #fbf7f2 100%);
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-strong: rgba(255, 255, 255, 0.90);
-  --surface-muted: #f5f5f8;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --surface-muted: #f4f6fa;
   --ink: #122d45;
   --ink-2: #334155;
   --muted: #6b6580;
@@ -32,3 +32,235 @@ body {
 
 .display { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.03em; }
 .mono    { font-family: 'JetBrains Mono', Menlo, monospace; }
+
+/* ── Page shell ─────────────────────────────────────────────────────────── */
+.vv-page {
+  min-height: 100dvh;
+  color: var(--ink);
+  background:
+    radial-gradient(900px 480px at 82% -80px, rgba(95, 200, 255, 0.22), transparent 70%),
+    radial-gradient(700px 420px at 4% 10%, rgba(16, 97, 166, 0.10), transparent 70%),
+    var(--bg-gradient);
+  background-attachment: fixed;
+}
+
+.vv-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.vv-hwrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+@media (min-width: 900px) {
+  .vv-hwrap { padding: 12px 28px; flex-wrap: nowrap; }
+}
+
+/* Network switcher: always visible, full width under the brand on phones */
+.vv-seg {
+  order: 3;
+  width: 100%;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+@media (min-width: 900px) {
+  .vv-seg { order: 0; width: auto; }
+}
+.vv-seg button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font: 600 12.5px 'DM Sans', sans-serif;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+@media (min-width: 900px) {
+  .vv-seg button { flex: none; }
+}
+
+/* Connect / account button in the header */
+.vv-connect {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 600 14px 'DM Sans', sans-serif;
+  color: #fff;
+  background: linear-gradient(180deg, #1b4468, #122d45);
+  box-shadow: 0 6px 14px rgba(18, 45, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: transform 0.12s;
+}
+.vv-connect:hover { transform: translateY(-1px); }
+.vv-connect:active { transform: translateY(0); }
+@media (max-width: 899px) {
+  .vv-connect { padding: 9px 14px; font-size: 13px; }
+}
+.vv-seg button[aria-pressed='true'] {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(18, 45, 69, 0.14), 0 0 0 1px var(--border);
+}
+.vv-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+/* Main layout: hero + feature list on the left, app card on the right.
+   On phones the order is hero, app, features, so the form is never far away. */
+.vv-main {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 26px 16px 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+  grid-template-areas: 'hero' 'app' 'feats';
+}
+.vv-hero  { grid-area: hero; }
+.vv-app   { grid-area: app; align-self: start; min-width: 0; }
+.vv-feats { grid-area: feats; }
+@media (min-width: 960px) {
+  .vv-main {
+    padding: 54px 28px 30px;
+    grid-template-columns: minmax(0, 1fr) 468px;
+    column-gap: 64px;
+    row-gap: 34px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 'hero app' 'feats app';
+  }
+}
+
+.vv-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  background: rgba(16, 97, 166, 0.08);
+  border: 1px solid rgba(16, 97, 166, 0.14);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.vv-h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  margin: 18px 0 14px;
+}
+.vv-h1 span {
+  background: linear-gradient(90deg, #1061a6, #2aa6e6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.vv-lead { font-size: 16px; line-height: 1.55; color: var(--ink-2); max-width: 520px; }
+@media (min-width: 960px) {
+  .vv-h1 { font-size: 56px; margin: 20px 0 18px; }
+  .vv-lead { font-size: 18px; }
+}
+
+.vv-feat {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+.vv-ico {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #eaf3fb, #dcebf8);
+  border: 1px solid rgba(16, 97, 166, 0.14);
+  color: var(--accent-hover);
+}
+
+/* ── Shared surface + field + button styles ─────────────────────────────── */
+.vv-card {
+  background: var(--surface);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 60px -28px rgba(18, 45, 69, 0.28), 0 2px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+/* Focus ring for the input wrappers (the real <input> has no border of its own) */
+.vv-field:not([data-invalid]):focus-within {
+  border-color: var(--focus) !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 4px rgba(133, 177, 237, 0.25);
+}
+
+.vv-cta {
+  background: linear-gradient(180deg, #1b4468, #122d45) !important;
+  box-shadow: 0 12px 24px -8px rgba(18, 45, 69, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.vv-cta:disabled { box-shadow: none; }
+
+.vv-how {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 22px 16px 10px;
+}
+.vv-steps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 900px) {
+  .vv-how { padding: 30px 28px 18px; }
+  .vv-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.vv-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 20px;
+}
+
+.vv-footer {
+  max-width: 1160px;
+  margin: 22px auto 0;
+  padding: 22px 16px 84px; /* extra bottom space so the fixed "Built with Arc Studio" badge never covers text */
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--subtle);
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 900px) {
+  .vv-footer { padding: 26px 28px 84px; }
+}
+.vv-footer a { color: var(--accent-hover); text-decoration: none; font-weight: 600; }
+.vv-footer a:hover { text-decoration: underline; }
