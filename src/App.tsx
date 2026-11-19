@@ -87,7 +87,7 @@ export default function App() {
   const [networkKey, setNetworkKey] = useState<NetworkKey>(initialNetwork)
 
   const net = NETWORKS[networkKey]
-  const { chainId, isConnected } = useAccount()
+  const { chainId, isConnected, status } = useAccount()
   const { switchChain } = useSwitchChain()
 
   // Wrong chain = wallet connected but on a different chain than the selected network
@@ -143,10 +143,12 @@ export default function App() {
           </div>
 
           <ConnectKitButton.Custom>
-            {({ isConnected: connected, show, truncatedAddress, ensName }) => (
+            {({ show, truncatedAddress, ensName }) => (
               <button type="button" className="vv-connect" onClick={show}>
-                {connected && <i className="vv-dot" style={{ background: '#3ddc84' }} />}
-                {connected ? (ensName ?? truncatedAddress) : 'Connect wallet'}
+                {isConnected && <i className="vv-dot" style={{ background: '#3ddc84' }} />}
+                {isConnected ? (ensName ?? truncatedAddress)
+                  : status === 'connecting' || status === 'reconnecting' ? 'Connecting…'
+                  : 'Connect wallet'}
               </button>
             )}
           </ConnectKitButton.Custom>

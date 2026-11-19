@@ -24,7 +24,8 @@ interface Props {
 }
 
 export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props) {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, status } = useAccount()
+  const connecting = status === 'connecting' || status === 'reconnecting'
   const { setOpen } = useModal()
 
   // ── Form state — NEVER cleared by approve or wallet changes ─────────────
@@ -455,12 +456,13 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
 
           {/* Review button → opens confirmation panel */}
           <button
-            disabled={isConnected && (!formValid || beneficiaryInvalid)}
+            disabled={connecting || (isConnected && (!formValid || beneficiaryInvalid))}
             onClick={() => (isConnected ? setConfirming(true) : setOpen(true))}
             className="vv-cta w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
             style={{ background: 'var(--accent)' }}
           >
-            {!isConnected ? 'Connect wallet'
+            {connecting ? 'Connecting…'
+              : !isConnected ? 'Connect wallet'
               : wrongChain ? `Switch to ${net.label}`
               : 'Review Schedule →'}
           </button>
