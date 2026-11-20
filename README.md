@@ -1,5 +1,8 @@
 # USDC Vesting
 
+![USDC Vesting app](docs/screenshot.png)
+
+
 A USDC linear-vesting and scheduled payout app on Arc (Testnet and Mainnet). A sender creates a vesting schedule for a beneficiary by depositing USDC with a start time and duration. The beneficiary claims vested USDC linearly over time. The sender can cancel and reclaim only the unvested portion; the beneficiary can still claim any vested-but-unclaimed USDC after cancellation.
 
 Built with [Arc Studio](https://studio.arc.io)
@@ -36,6 +39,29 @@ Explorer source verification: both contracts are verified on Arc Explorer (exact
  The exact compiler input is also in this repo: `deploy/VestingVault.flat.sol` and `deploy/standard-json-input.json`.
 
 Status: UNAUDITED. Use small amounts only.
+
+## Verified on Arc Mainnet
+
+The full flow was exercised by hand on Arc Mainnet with small amounts (0.2 and 0.5 USDC) using three wallets:
+
+| Flow | Result |
+|---|---|
+| Approve the exact amount, then `createSchedule` | Schedule created; vested amount matched the linear formula to the second |
+| `claim` by the beneficiary, mid-schedule and after the end | Paid exactly the vested amount; two claims summed to the full 0.5 USDC |
+| `cancel` by the sender, mid-schedule | Unvested part (0.190889 of 0.2 USDC) returned to the sender, the rest frozen for the beneficiary |
+| `claimAfterCancel` by the beneficiary | The frozen 0.009111 USDC was paid out, and the schedule was settled |
+| `createSchedule` for a pair whose previous schedule was not settled | Reverted on-chain; the UI reports the failure instead of a false success |
+
+In every case the amounts add up exactly: nothing is created or lost by the contract. Gas on Arc is paid in USDC and was about 0.0006 to 0.002 USDC per transaction.
+
+## Design notes and limits
+
+- **One schedule per sender and beneficiary pair** until the previous one is fully settled (`PriorVestingNotSettled`).
+- **The sender can cancel.** Only the unvested part comes back; the vested part always stays claimable by the beneficiary.
+- **No owner, no admin, no upgrade.** Nobody, including the deployer, can move funds out of a schedule.
+- **No yield.** The contract only holds and releases USDC. Locked funds do not earn interest.
+- **Unaudited.** Use small amounts only.
+- The app opens on Arc Testnet by default. Use `/?network=mainnet` to open it on Mainnet.
 
 ## Development
 
@@ -75,6 +101,6 @@ bun run contracts:test    # run Foundry tests
 
 ## App Features
 
-- **Create schedule**: Approve USDC, set beneficiary address, amount, duration (in days), and start time (now or a future date). Passes `startTime = 0` to the contract when "Now" is selected, which resolves to `block.timestamp` on-chain.
+- **Create schedule**: Approve the exact USDC amount, set beneficiary address, amount, duration (minutes, hours or days), and start time (now or a future date). A live release preview shows the rate (USDC per unit) and the date the schedule is fully vested. Passes `startTime = 0` to the contract when "Now" is selected, which resolves to `block.timestamp` on-chain.
 - **View & Claim**: Look up any vesting schedule by sender + beneficiary address. Shows vested and claimable amounts live. Beneficiaries can claim vested USDC; senders can cancel and reclaim the unvested portion.
 - **Cancelled schedules**: After a sender cancels, the app detects the cancelled state (`vestedAmount = 0` but `claimable > 0`) and automatically routes the beneficiary's claim to `claimAfterCancel`.
