@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useModal } from 'connectkit'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
 import { erc20Abi, isAddress, zeroAddress } from 'viem'
@@ -105,7 +105,9 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
 
   // ── Step 2: createSchedule ────────────────────────────────────────────────
   const { writeContract: create, data: createTxHash, isPending: createPending, reset: resetCreate } = useWriteContract()
-  const { isLoading: createConfirming, isSuccess: createSuccess } = useWaitForTransactionReceipt({ hash: createTxHash })
+  const { isLoading: createConfirming, data: createReceipt } = useWaitForTransactionReceipt({ hash: createTxHash })
+  // A mined transaction can still have reverted: only receipt.status tells the truth.
+  const createSuccess = createReceipt?.status === 'success'
 
   const canConfirmCreate = approveSuccess && formValid && (!isSelf || selfConfirmed)
 
@@ -136,25 +138,39 @@ export default function CreateSchedule({ net, wrongChain, onSwitchChain }: Props
       args: [beneficiary as `0x${string}`, parsedAmount.raw, resolvedStart, durationSecs],
       chainId: net.chainId,
     }, {
-      onSuccess: () => {
-        toast.success('Vesting schedule created!')
-        void refetchAllowance()
-        // Reset to step 1 and clear form after short delay so user sees success
-        setTimeout(() => {
-          resetCreate()
-          setConfirming(false)
-          setSelfConfirmed(false)
-          setBeneficiary('')
-          setAmount('')
-          setDurationValue('')
-          setDurationUnit('days')
-          setStartNow(true)
-          setStartDate('')
-        }, 2500)
-      },
       onError: (e) => toast.error(e.message.slice(0, 80)),
     })
   }
+
+  // React to the mined receipt, not to the wallet handing back a hash.
+  useEffect(() => {
+    if (createReceipt?.status === 'success') {
+      toast.success('Vesting schedule created!')
+      void refetchAllowance()
+      // Reset to step 1 and clear form after a short delay so the user sees the success state
+      const t = setTimeout(() => {
+        resetCreate()
+        setConfirming(false)
+        setSelfConfirmed(false)
+        setBeneficiary('')
+        setAmount('')
+        setDurationValue('')
+        setDurationUnit('days')
+        setStartNow(true)
+        setStartDate('')
+      }, 2500)
+      return () => clearTimeout(t)
+    }
+    if (createReceipt?.status === 'reverted') {
+      const failedUrl = createTxHash ? buildTxUrl(net, createTxHash) : null
+      toast.error('Transaction failed on-chain. No schedule was created.', {
+        duration: 12000,
+        action: failedUrl ? { label: 'View', onClick: () => window.open(failedUrl, '_blank', 'noreferrer') } : undefined,
+      })
+      resetCreate()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createReceipt])
 
   const txUrl = createTxHash ? buildTxUrl(net, createTxHash) : null
 
